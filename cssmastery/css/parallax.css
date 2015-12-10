@@ -1,0 +1,15 @@
+body{
+	margin:0;
+	padding: 0;
+	background:#d3ff99 url(../img/bg-rear.gif) repeat-x 20% 0;
+}
+h1{
+	margin: 0;
+}
+.midground{
+	background:transparent url(../img/bg-mid.png) repeat-x 40% 0;
+}
+.content{
+	padding:130px 0 0 50px;
+	height:300px;
+}
