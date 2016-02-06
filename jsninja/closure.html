@@ -5,10 +5,13 @@
     <title>Demo by liw783</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="js/assert.js"></script>
+    <script src="../js/jquery-2.1.1.min.js"></script>
     <link href="styles/assert.css" rel="stylesheet" type="text/css">
     
   </head>
   <body>
+    <div id="aniBox">aniBox</div>
+    <button id="test">test</button>
     <script type="text/javascript">
 
 
@@ -29,8 +32,72 @@
     var toolate='ronin';
     outerFunction();
     later('wakizashi');
+
+    function Ninja(){
+      var feints=0;
+
+      this.getFeints=function(){
+        return feints;
+      }
+
+      this.feint=function(){
+        feints++;
+      }
+    }
+    var ninja=new Ninja();
+    ninja.feint();
+    assert(ninja.getFeints()==1,"private var, feint count is 1");
+    assert(ninja.feints==undefined,"private var, private data is inaccessable");
     
-    
+    function animate(eleId){
+      var elem$=$('#'+eleId);
+      var tick=1;
+      var timer=setInterval(function(){
+        if(tick<10){
+          elem$.text(tick);
+          tick++;
+        }
+        else{
+          clearInterval(timer);
+          assert(tick==10,"tick accessed via closure");
+          assert(elem$,"elem$ accessed via closure");
+          assert(timer,"timer accessed via closure");
+        }
+      },1000);
+    }
+    animate('aniBox');
+
+    var button={
+      clicked:false,
+      click:function(){
+        this.clicked=true;
+        assert(button.clicked,"use closure to change context");
+        console.log(arguments);
+      }
+    }
+    function bind(context,name){
+      return function(){
+         context[name].apply(context,arguments);
+      };
+    }
+    var elem=document.getElementById("test");
+    elem.addEventListener("click",bind(button,"click"),false);
+
+    Function.prototype.bind=function(){
+      var fn=this,args=Array.prototype.slice.call(arguments),object=args.shift();
+      return function(){
+        return fn.apply(object,args.concat(Array.prototype.slice.call(arguments)));
+      }
+
+    }
+    var myobject={};
+    function myfunction(){
+      console.log(arguments);
+      return this==myobject;
+    }
+    assert(!myfunction(),"context not yet set");
+    var aFunction=myfunction.bind(myobject,"li");
+    assert(aFunction("wen"),"context is set");
     </script>
   </body>
 </html>
